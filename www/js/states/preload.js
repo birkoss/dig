@@ -17,6 +17,8 @@ GAME.Preload.prototype = {
 
         this.load.image('tile:gold', 'images/tiles/gold.png');
         this.load.image('tile:ghost', 'images/tiles/ghost.png');
+
+        this.load.spritesheet('btn:quit', 'images/gui/btn-quit.png', 190, 49);
     },
     create: function() {
         this.state.start('Game'); /* Game/Debug */
