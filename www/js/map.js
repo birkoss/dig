@@ -89,12 +89,12 @@ Map.prototype.createMap = function() {
             let index = Math.floor(Math.random() * (probabilityTotal-1));
             let lastProbability = 0;
             for (let tileProbability in tilesProbabilities) {
-                if (index <= (tileProbability + lastProbability)) {
+                if (index <= (parseInt(tileProbability) + lastProbability)) {
                     let tiles = tilesProbabilities[tileProbability];
                     tile = tiles[Math.floor(Math.random() * (tiles.length-1))];
                     break;
                 }
-                lastProbability = tileProbability;
+                lastProbability = parseInt(tileProbability);
             }
 
             /* Create the item if it's possible */
@@ -168,20 +168,21 @@ Map.prototype.onBlockInputUp = function(tile, pointer) {
         /* Show the items (if any) in this tile */
         let item = this.getTileAt(tile.gridX, tile.gridY, this.itemsContainer);
         if (item != null) {
-            if (item.type == "ghost") {
+            if (item.type == "enemy") {
                 this.onHitTaken.dispatch(item, 1);
             } else if (item.type == "hazard") {
                 this.onHitTaken.dispatch(item, 2);
-            } else if (item.type == "gold") {
+            } else if (item.type == "gem") {
                 let coins = 1;
-                let emitter = this.game.add.emitter(tile.x + (tile.width/2), tile.y + (tile.height/2), coins);
-                emitter.makeParticles('panel:coins');
+                let emitter = this.game.add.emitter(tile.x, tile.y, coins);
+                emitter.makeParticles('tile:coins');
 
                 this.addChild(emitter);
 
                 let speed = 100;
                 let lifetime = 800;
                 emitter.minParticleSpeed.setTo(speed * -1, speed * -1);
+                emitter.minParticleScale = emitter.maxParticleScale = 4;
                 emitter.maxParticleSpeed.setTo(speed, speed);
 
                 emitter.start(true, lifetime, 1, 20);

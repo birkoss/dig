@@ -16,11 +16,7 @@ GAME.Game.prototype = {
 
         this.panelContainer = this.game.add.group();
 
-        this.heartsContainer = this.game.add.group();
-        this.createHearts(this.lives);
-
-        this.coinsContainer = this.game.add.group();
-        this.createCoins();
+        this.createPanel();
     },
     update: function() {
     },
@@ -33,34 +29,42 @@ GAME.Game.prototype = {
 
         button.y = ((this.game.height - this.mapContainer.y - this.mapContainer.height)/2) - (button.height/2) + this.mapContainer.y + this.mapContainer.height;
     },
-    createCoins: function() {
-        let icon = this.coinsContainer.create(0, 0, 'panel:coins');
-        icon.scale.setTo(GAME.RATIO, GAME.RATIO);
-        icon.x = this.game.width - icon.width;
+    createCoins: function(container) {
+        let icon = container.create(0, 0, "tile:coins");
+        icon.scale.setTo(GAME.scale.normal + 1, GAME.scale.normal + 1);
+        icon.anchor.set(1, 0.5);
+        console.log(GAME.scale.normal);
+        icon.x = 0;
+        icon.y = icon.height/2;
+        //icon.x = this.game.width - icon.width;
 
-        let label = this.game.add.bitmapText(0, 0, 'font:guiOutline', "x", 20);
+        let label = this.game.add.bitmapText(0, 0, "font:gui", "x", 20);
         label.anchor.set(1, 0.5);
-        label.x = icon.x;
+        label.x = icon.x - icon.width - 4;
         label.y = icon.height/2;
-        this.coinsContainer.addChild(label);
+        label.y--;
+        container.addChild(label);
 
-        this.coinsLabel = this.game.add.bitmapText(0, 0, 'font:guiOutline', "0", 20);
+        this.coinsLabel = this.game.add.bitmapText(0, 0, "font:gui", "0", 20);
         this.coinsLabel.anchor.set(1, 0.5);
-        this.coinsLabel.x = label.x - label.width;
+        this.coinsLabel.x = label.x - label.width - 4;
         this.coinsLabel.y = icon.height/2;
-        this.coinsContainer.addChild(this.coinsLabel);
+        this.coinsLabel.y --;
+        container.addChild(this.coinsLabel);
     },
-    createHearts: function(maxHearts) {
+    createHearts: function(container, maxHearts) {
         for (let i=0; i<maxHearts; i++) {
-            let background = this.heartsContainer.create(0, 0, 'panel:hearts');
-            background.frame = 2;
-            background.scale.setTo(GAME.RATIO, GAME.RATIO);
+            let background = container.create(0, 0, "tile:heart");
+            background.scale.setTo(GAME.scale.normal + 1, GAME.scale.normal + 1);
+            background.anchor.set(0.5, 0.5);
             background.x = i * background.width;
+            background.tint = 0x000000;
 
-            let icon = this.heartsContainer.create(0, 0, 'panel:hearts');
+            background.x += background.width/2;
+            background.y += background.height/2;
+
+            let icon = container.create(0,0, "tile:heart");
             icon.anchor.set(0.5, 0.5);
-            icon.x = Math.floor(icon.width/2);
-            icon.y = Math.floor(icon.height/2);
             background.addChild(icon);
         }
     },
@@ -84,6 +88,24 @@ GAME.Game.prototype = {
 
         this.mapContainer.x = (this.game.width - this.mapContainer.width)/2;
         this.mapContainer.y = (this.game.height - this.mapContainer.height)/2;
+    },
+    createPanel: function() {
+        let panel = this.panelContainer.create(0, 0, 'tile:blank');
+
+        this.heartsContainer = this.game.add.group();
+        this.panelContainer.add(this.heartsContainer);
+        this.createHearts(this.heartsContainer, 3);
+        this.heartsContainer.x = this.heartsContainer.y = GAME.scale.sprite;
+
+        let coinsContainer = this.game.add.group();
+        this.panelContainer.add(coinsContainer);
+        this.createCoins(coinsContainer);
+        coinsContainer.y = GAME.scale.sprite;
+        coinsContainer.x = this.game.width - GAME.scale.sprite;
+
+        panel.tint = 0xff00ff;
+        panel.width = this.game.width;
+        panel.height = this.heartsContainer.height + (GAME.scale.sprite * 2);
     },
 
     refreshHearts: function() {

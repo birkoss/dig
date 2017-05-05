@@ -8,6 +8,8 @@ GAME.Preload.prototype = {
         this.preloadBar.anchor.set(0.5);
         this.load.setPreloadSprite(this.preloadBar);
 
+        this.load.image('tile:blank', 'images/tiles/blank.png');
+
         this.load.spritesheet('tile:grass', 'images/tiles/grass.png', 8, 8);
         this.load.spritesheet('tile:lava', 'images/tiles/lava.png', 8, 8);
         this.load.image('tile:stone', 'images/tiles/stone.png');
@@ -15,8 +17,8 @@ GAME.Preload.prototype = {
         this.load.image('tile:gold', 'images/tiles/gold.png');
         this.load.image('tile:ghost', 'images/tiles/ghost.png');
 
-        this.load.spritesheet('panel:hearts', 'images/tiles/hearts.png', 21, 21);
-        this.load.image('panel:coins', 'images/tiles/coins.png');
+        this.load.image('tile:heart', 'images/tiles/heart.png');
+        this.load.image('tile:coins', 'images/tiles/coins.png');
 
         this.load.spritesheet('btn:quit', 'images/gui/btn-quit.png', 190, 49);
 

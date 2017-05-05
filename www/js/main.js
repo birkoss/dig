@@ -1,7 +1,10 @@
+/*
+ * Animate the lava
+ */
 var GAME = GAME || {};
 
 GAME.scale = {sprite:6, normal:1};
-GAME.scale.normal = Math.min(6, Math.floor(window.innerWidth / 320) * 2);
+GAME.scale.normal = Math.max(1, Math.min(6, Math.floor(window.innerWidth / 320) * 2));
 
 GAME.game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.CANVAS, '');
 
