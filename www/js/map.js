@@ -23,24 +23,10 @@ Map.prototype = Object.create(Phaser.Group.prototype);
 Map.prototype.constructor = Map;
 
 Map.prototype.createMap = function() {
-    let blackBackground = this.backgroundContainer.create(0, 0, 'tile:grass');
-    blackBackground.tint = 0x000000;
 
+    /* Create the removable tiles */
     for (let y=0; y<this.gridHeight; y++) {
         for (let x=0; x<this.gridWidth; x++) {
-            if (y == (this.gridHeight-1) && Math.floor(Math.random() * 100) <= 30) {
-                let item = this.createTile(x, y, 'tile:lava');
-                item.type = "hazard";
-                item.animations.add("idle", [0, 1], 4, true);
-                item.animations.play("idle");
-                this.itemsContainer.addChild(item);
-            }
-
-            let background = this.createTile(x, y, 'tile:grass');
-            background.frame = 1;
-            background.alpha = 0.6;
-            this.backgroundContainer.addChild(background);
-
             let tile = this.createTile(x, y, 'tile:grass');
             tile.frame = (y == 0 ? 0 : 1);
             this.tilesContainer.addChild(tile);
@@ -52,8 +38,12 @@ Map.prototype.createMap = function() {
         }
     }
 
-    blackBackground.width = this.tilesContainer.width;
-    blackBackground.height = this.tilesContainer.height;
+    /* Create the grass faded background bellow the tile */
+    let background = this.game.add.tileSprite(0, 0, this.tilesContainer.width/GAME.scale.sprite, this.tilesContainer.height/GAME.scale.sprite, "tile:grass");
+    background.scale.setTo(GAME.scale.sprite, GAME.scale.sprite);
+    background.frame = 1;
+    background.alpha = 0.6;
+    this.backgroundContainer.addChild(background);
 
     /* Generate items */
     let items = new Array();
@@ -63,13 +53,15 @@ Map.prototype.createMap = function() {
     for (let i=0; i<6; i++) {
         items.push('gold');
     }
+    for (let i=0; i<3; i++) {
+        items.push('lava');
+    }
 
     items.forEach(function(singleItem) {
         let position = this.getRandomEmptyTile();
 
         let item = this.createTile(position.gridX, position.gridY, "tile:" + singleItem);
         item.scale.setTo(4, 4);
-        //item.x += (item.width/2);
         item.type = singleItem;
         this.itemsContainer.addChild(item);
         item.alpha = 0;
@@ -80,7 +72,7 @@ Map.prototype.createMap = function() {
 
 Map.prototype.createTile = function(gridX, gridY, spriteName) {
     let tile = this.game.add.sprite(0, 0, spriteName);
-    tile.scale.setTo(6, 6);
+    tile.scale.setTo(GAME.scale.sprite, GAME.scale.sprite);
     tile.anchor.set(0.5, 0.5);
     tile.x = tile.width * gridX;
     tile.y = tile.height * gridY;

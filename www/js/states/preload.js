@@ -8,8 +8,6 @@ GAME.Preload.prototype = {
         this.preloadBar.anchor.set(0.5);
         this.load.setPreloadSprite(this.preloadBar);
 
-        this.load.image('map:background', 'images/map.png');
-
         this.load.spritesheet('tile:grass', 'images/tiles/grass.png', 8, 8);
         this.load.spritesheet('tile:lava', 'images/tiles/lava.png', 8, 8);
         this.load.image('tile:stone', 'images/tiles/stone.png');

@@ -71,10 +71,10 @@ GAME.Game.prototype = {
 
         console.log(this.map.width + "x" + this.map.height);
 
-        let mapSize = (this.map.width) / 6;
+        let mapSize = (this.map.width) / GAME.scale.sprite;
         mapSize += 2;
         let background = this.game.add.tileSprite(0, 0, mapSize, mapSize, "tile:stone");
-        background.scale.setTo(6, 6);
+        background.scale.setTo(GAME.scale.sprite, GAME.scale.sprite);
 
         this.mapContainer.addChild(background);
         this.mapContainer.addChild(this.map);
