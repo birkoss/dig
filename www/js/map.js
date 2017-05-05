@@ -31,6 +31,8 @@ Map.prototype.createMap = function() {
             if (y == (this.gridHeight-1) && Math.floor(Math.random() * 100) <= 30) {
                 let item = this.createTile(x, y, 'tile:lava');
                 item.type = "hazard";
+                item.animations.add("idle", [0, 1], 4, true);
+                item.animations.play("idle");
                 this.itemsContainer.addChild(item);
             }
 
@@ -66,6 +68,8 @@ Map.prototype.createMap = function() {
         let position = this.getRandomEmptyTile();
 
         let item = this.createTile(position.gridX, position.gridY, "tile:" + singleItem);
+        item.scale.setTo(4, 4);
+        //item.x += (item.width/2);
         item.type = singleItem;
         this.itemsContainer.addChild(item);
         item.alpha = 0;
@@ -76,9 +80,13 @@ Map.prototype.createMap = function() {
 
 Map.prototype.createTile = function(gridX, gridY, spriteName) {
     let tile = this.game.add.sprite(0, 0, spriteName);
-    tile.scale.setTo(2, 2);
+    tile.scale.setTo(6, 6);
+    tile.anchor.set(0.5, 0.5);
     tile.x = tile.width * gridX;
     tile.y = tile.height * gridY;
+
+    tile.x += tile.width/2;
+    tile.y += tile.height/2;
 
     tile.gridX = gridX;
     tile.gridY = gridY;

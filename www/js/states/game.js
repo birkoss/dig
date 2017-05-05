@@ -65,11 +65,18 @@ GAME.Game.prototype = {
         }
     },
     createMap: function() {
-        let background = this.mapContainer.create(0, 0, 'map:background');
-
         this.map = new Map(this.game, 6, 6);
         this.map.onHitTaken.add(this.onMapHitTaken, this);
         this.map.onCoinsTaken.add(this.onMapCoinsTaken, this);
+
+        console.log(this.map.width + "x" + this.map.height);
+
+        let mapSize = (this.map.width) / 6;
+        mapSize += 2;
+        let background = this.game.add.tileSprite(0, 0, mapSize, mapSize, "tile:stone");
+        background.scale.setTo(6, 6);
+
+        this.mapContainer.addChild(background);
         this.mapContainer.addChild(this.map);
 
         this.map.x = (this.mapContainer.width - this.map.width)/2;
