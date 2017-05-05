@@ -13,6 +13,9 @@ function Map(game, width, height) {
     this.tilesContainer = this.game.add.group();
     this.add(this.tilesContainer);
 
+    this.onHitTaken = new Phaser.Signal();
+    this.onCoinsTaken = new Phaser.Signal();
+
     this.createMap();
 };
 
@@ -20,25 +23,30 @@ Map.prototype = Object.create(Phaser.Group.prototype);
 Map.prototype.constructor = Map;
 
 Map.prototype.createMap = function() {
-    let blackBackground = this.backgroundContainer.create(0, 0, 'tile:dirt');
+    let blackBackground = this.backgroundContainer.create(0, 0, 'tile:grass');
     blackBackground.tint = 0x000000;
 
     for (let y=0; y<this.gridHeight; y++) {
         for (let x=0; x<this.gridWidth; x++) {
             if (y == (this.gridHeight-1) && Math.floor(Math.random() * 100) <= 30) {
                 let item = this.createTile(x, y, 'tile:lava');
+                item.type = "hazard";
                 this.itemsContainer.addChild(item);
             }
 
-            let background = this.createTile(x, y, 'tile:dirt');
+            let background = this.createTile(x, y, 'tile:grass');
+            background.frame = 1;
             background.alpha = 0.6;
             this.backgroundContainer.addChild(background);
 
-            let tile = this.createTile(x, y, 'tile:' + (y > 0 ? 'dirt' : 'dirt-top'));
+            let tile = this.createTile(x, y, 'tile:grass');
+            tile.frame = (y == 0 ? 0 : 1);
             this.tilesContainer.addChild(tile);
 
             tile.inputEnabled = true;
-            tile.events.onInputDown.add(this.onMapTileClicked, this);
+            tile.events.onInputDown.add(this.onMapTileSelected, this);
+            tile.events.onInputOut.add(this.onMapTileOut, this);
+            tile.events.onInputUp.add(this.onMapTileClicked, this);
         }
     }
 
@@ -58,7 +66,9 @@ Map.prototype.createMap = function() {
         let position = this.getRandomEmptyTile();
 
         let item = this.createTile(position.gridX, position.gridY, "tile:" + singleItem);
+        item.type = singleItem;
         this.itemsContainer.addChild(item);
+        item.alpha = 0;
     }, this);
 };
 
@@ -66,7 +76,7 @@ Map.prototype.createMap = function() {
 
 Map.prototype.createTile = function(gridX, gridY, spriteName) {
     let tile = this.game.add.sprite(0, 0, spriteName);
-    tile.width = tile.height = 42;
+    tile.scale.setTo(2, 2);
     tile.x = tile.width * gridX;
     tile.y = tile.height * gridY;
 
@@ -74,6 +84,18 @@ Map.prototype.createTile = function(gridX, gridY, spriteName) {
     tile.gridY = gridY;
 
     return tile;
+};
+
+Map.prototype.getItemAt = function(gridX, gridY) {
+    let wantedItem = null;
+
+    this.itemsContainer.forEach(function(Item) {
+        if (Item.gridX == gridX && Item.gridY == gridY) {
+            wantedItem = Item;
+        }
+    }, this);
+
+    return wantedItem;
 };
 
 Map.prototype.getTileAt = function(gridX, gridY) {
@@ -111,14 +133,49 @@ Map.prototype.getRandomEmptyTile = function() {
 /* Events */
 
 Map.prototype.onMapTileClicked = function(tile, pointer) {
-    if (tile.frame != 011) {
+    if (tile.alpha == 0.5) {
         tile.inputEnabled = false;
         tile.alpha = 0;
+        
+        let item = this.getItemAt(tile.gridX, tile.gridY);
+        if (item != null) {
+            if (item.type == "ghost") {
+                this.onHitTaken.dispatch(item, 1);
+            } else if (item.type == "hazard") {
+                this.onHitTaken.dispatch(item, 2);
+            } else if (item.type == "gold") {
+                let coins = 1;
+                let emitter = this.game.add.emitter(tile.x + (tile.width/2), tile.y + (tile.height/2), coins);
+                emitter.makeParticles('panel:coins');
+
+                this.addChild(emitter);
+
+                let speed = 100;
+                let lifetime = 800;
+                emitter.minParticleSpeed.setTo(speed * -1, speed * -1);
+                emitter.maxParticleSpeed.setTo(speed, speed);
+
+                emitter.start(true, lifetime, 1, 20);
+                this.onCoinsTaken.dispatch(item, 1);
+            }
+            item.alpha = 1;
+        }
 
         let tileUnder = this.getTileAt(tile.gridX, tile.gridY+1);
         if (tileUnder != null) {
-            tileUnder.loadTexture("tile:dirt-top");
             tileUnder.frame = 0;
         }
+    }
+
+
+};
+
+Map.prototype.onMapTileSelected = function(tile, pointer) {
+    tile.alpha = 0.5;
+};
+
+Map.prototype.onMapTileOut = function(tile, pointer) {
+    if (tile.alpha == 0.5) {
+        tile.alpha = 1;
     }
 };

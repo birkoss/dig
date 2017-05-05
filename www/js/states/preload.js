@@ -10,15 +10,19 @@ GAME.Preload.prototype = {
 
         this.load.image('map:background', 'images/map.png');
 
-        this.load.image('tile:dirt-top', 'images/tiles/dirt-top.png');
-        this.load.image('tile:dirt', 'images/tiles/dirt.png');
-        this.load.image('tile:stone', 'images/tiles/stone.png');
+        this.load.spritesheet('tile:grass', 'images/tiles/grass.png', 21, 21);
         this.load.image('tile:lava', 'images/tiles/lava.png');
 
         this.load.image('tile:gold', 'images/tiles/gold.png');
         this.load.image('tile:ghost', 'images/tiles/ghost.png');
 
+        this.load.spritesheet('panel:hearts', 'images/tiles/hearts.png', 21, 21);
+        this.load.image('panel:coins', 'images/tiles/coins.png');
+
         this.load.spritesheet('btn:quit', 'images/gui/btn-quit.png', 190, 49);
+
+        this.load.bitmapFont('font:guiOutline', 'fonts/guiOutline.png', 'fonts/guiOutline.xml');
+        this.load.bitmapFont('font:gui', 'fonts/gui.png', 'fonts/gui.xml');
     },
     create: function() {
         this.state.start('Game'); /* Game/Debug */
