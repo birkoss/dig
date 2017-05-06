@@ -172,10 +172,11 @@ GAME.Game.prototype = {
     onBtnLeaveClicked: function(tile, pointer) {
         if (this.lives > 0) {
             GAME.config.coins += this.coins;
+            this.state.start("Main");
         }
     },
     onBtnQuitClicked: function(tile, pointer) {
-        this.state.restart();
+        this.state.start("Main");
     },
     onMapCoinsTaken: function(tile, amount) {
         this.coins += amount;
