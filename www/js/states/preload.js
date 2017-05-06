@@ -21,6 +21,8 @@ GAME.Preload.prototype = {
         this.load.image('tile:coins', 'images/tiles/coins.png');
 
         this.load.spritesheet('btn:quit', 'images/gui/btn-quit.png', 190, 49);
+        this.load.spritesheet('btn:small', 'images/gui/button-small.png', 140, 40);
+        this.load.spritesheet('btn:large', 'images/gui/button-large.png', 220, 40);
 
         this.load.bitmapFont('font:guiOutline', 'fonts/guiOutline.png', 'fonts/guiOutline.xml');
         this.load.bitmapFont('font:gui', 'fonts/gui.png', 'fonts/gui.xml');

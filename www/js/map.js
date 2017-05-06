@@ -59,7 +59,7 @@ Map.prototype.createMap = function() {
             probabilities: [15, 15, 15, 15, 15, 25]
         }, 
         gem: {
-            limit: 6,
+            limit: 10,
             sprite: 'gold',
             scale: 4,
             probabilities: [15, 15, 15, 15, 15, 25]
@@ -127,6 +127,19 @@ Map.prototype.createTile = function(gridX, gridY, spriteName) {
     return tile;
 };
 
+Map.prototype.disableInput = function() {
+    this.itemsContainer.forEach(function(tile) {
+        tile.alpha = 1;
+    }, this);
+
+    this.blocksContainer.forEach(function(tile) {
+        tile.inputEnabled = false;
+        let tween = this.game.add.tween(tile).to({alpha:0}, 1000, "Linear", true, 0, -1);
+        tween.repeatDelay(500);
+        tween.yoyo(true, 500);
+    }, this);
+};
+
 Map.prototype.getTileAt = function(gridX, gridY, container) {
     let wantedTile = null;
 
@@ -173,19 +186,6 @@ Map.prototype.onBlockInputUp = function(tile, pointer) {
             } else if (item.type == "hazard") {
                 this.onHitTaken.dispatch(item, 2);
             } else if (item.type == "gem") {
-                let coins = 1;
-                let emitter = this.game.add.emitter(tile.x, tile.y, coins);
-                emitter.makeParticles('tile:coins');
-
-                this.addChild(emitter);
-
-                let speed = 100;
-                let lifetime = 800;
-                emitter.minParticleSpeed.setTo(speed * -1, speed * -1);
-                emitter.minParticleScale = emitter.maxParticleScale = 4;
-                emitter.maxParticleSpeed.setTo(speed, speed);
-
-                emitter.start(true, lifetime, 1, 20);
                 this.onCoinsTaken.dispatch(item, 1);
             }
             item.alpha = 1;
